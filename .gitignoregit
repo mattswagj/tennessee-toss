@@ -1,0 +1,1 @@
+"*.txt"  rm --cached "env.local tennesee toss.txt"
