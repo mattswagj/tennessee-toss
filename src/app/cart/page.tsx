@@ -118,7 +118,7 @@ function CartItemRow({
 export default function CartPage() {
   const t = useTranslations();
   const { locale } = useLanguage();
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, totalPrice } = useCart();
   const { user } = useAuth();
 
   const [orderType, setOrderType] = useState<"pickup" | "delivery">("pickup");
