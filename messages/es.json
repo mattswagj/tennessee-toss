@@ -1,0 +1,194 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "menu": "Menú",
+    "buildSalad": "Arma Tu Ensalada",
+    "account": "Cuenta"
+  },
+  "hero": {
+    "tagline": "Preparado Fresco Cada Día",
+    "subtitle": "Ingredientes frescos, sabores de Tennessee, todos los días.",
+    "orderNow": "Ordenar Ahora"
+  },
+  "features": {
+    "title": "¿Por qué Tennessee Toss?",
+    "fresh": {
+      "title": "Ingredientes Frescos",
+      "description": "Productos de origen local entregados diariamente para máxima frescura."
+    },
+    "bold": {
+      "title": "Sabores Intensos",
+      "description": "Aderezos y toppings únicos inspirados en Tennessee que no encontrarás en otro lugar."
+    },
+    "rewards": {
+      "title": "Gana Recompensas",
+      "description": "Cada orden te da puntos canjeables por artículos gratis y descuentos."
+    }
+  },
+  "menuPreview": {
+    "title": "Artículos Destacados",
+    "viewAll": "Ver Menú Completo",
+    "addToCart": "Agregar al Carrito"
+  },
+  "menu": {
+    "title": "Nuestro Menú",
+    "subtitle": "Fresco, intenso y preparado especialmente para ti.",
+    "all": "Todo",
+    "vegan": "Vegano",
+    "keto": "Keto",
+    "glutenFree": "Sin Gluten",
+    "addToCart": "Agregar al Carrito",
+    "noItems": "No se encontraron artículos."
+  },
+  "builder": {
+    "title": "Arma Tu Ensalada",
+    "subtitle": "Crea tu tazón perfecto, paso a paso.",
+    "stepOf": "Paso {current} de {total}",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "addToCart": "Agregar al Carrito",
+    "runningTotal": "Total Acumulado",
+    "optional": "Opcional — puedes omitir este paso",
+    "step1Label": "Elige Tu Base",
+    "step2Label": "Elige Toppings",
+    "step3Label": "Agrega Proteína",
+    "step4Label": "Elige Aderezo",
+    "step5Label": "Revisa tu Orden",
+    "bases": {
+      "romaine": "Lechuga Romana",
+      "spinach": "Espinacas",
+      "mixed": "Mezcla de Lechugas",
+      "kale": "Col Rizada"
+    },
+    "toppingsTitle": "Selecciona tus toppings (incluidos gratis)",
+    "toppings": {
+      "tomatoes": "Tomates",
+      "cucumbers": "Pepinos",
+      "redOnion": "Cebolla Roja",
+      "corn": "Maíz",
+      "croutons": "Crutones",
+      "avocado": "Aguacate",
+      "baconBits": "Trozos de Tocino"
+    },
+    "proteinTitle": "Agrega una Proteína",
+    "dressingTitle": "Elige un Aderezo",
+    "noProtein": "Sin proteína",
+    "noDressing": "Sin aderezo",
+    "review": {
+      "title": "Tu Ensalada Personalizada",
+      "base": "Base",
+      "toppings": "Toppings",
+      "protein": "Proteína",
+      "dressing": "Aderezo",
+      "none": "Ninguno",
+      "total": "Total"
+    }
+  },
+  "cart": {
+    "title": "Tu Carrito",
+    "empty": "Tu carrito está vacío.",
+    "startOrder": "Comenzar una Orden",
+    "customSalad": "Ensalada Personalizada",
+    "subtotal": "Subtotal",
+    "tax": "Impuesto (8%)",
+    "total": "Total",
+    "remove": "Eliminar",
+    "orderType": "Tipo de Orden",
+    "pickup": "Para Llevar",
+    "delivery": "A Domicilio",
+    "deliveryAddress": "Dirección de Entrega",
+    "deliveryPlaceholder": "Ingresa tu dirección completa",
+    "loyalty": {
+      "title": "Puntos de Lealtad",
+      "balance": "Tu Saldo",
+      "points": "pts",
+      "redeem": "Canjear Puntos",
+      "redeemPlaceholder": "Puntos a canjear",
+      "applyBtn": "Aplicar",
+      "applied": "Descuento Aplicado",
+      "remove": "Eliminar",
+      "willEarn": "Ganarás {points} pts con esta orden",
+      "signIn": "Inicia sesión para ganar y canjear puntos"
+    },
+    "checkout": "Proceder al Pago"
+  },
+  "account": {
+    "title": "Mi Cuenta",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Crear Cuenta",
+    "signOut": "Cerrar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "fullName": "Nombre Completo",
+    "signingIn": "Iniciando sesión…",
+    "signingUp": "Creando cuenta…",
+    "noAccount": "¿No tienes cuenta?",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "loyalty": {
+      "title": "Puntos de Lealtad",
+      "balance": "{points} puntos",
+      "progress": "{points} puntos para la próxima recompensa (cada 500 pts)",
+      "rewards": "Recompensas Disponibles",
+      "noRewards": "No hay recompensas disponibles aún.",
+      "redeem": "Canjear"
+    },
+    "orders": {
+      "title": "Historial de Órdenes",
+      "noOrders": "No hay órdenes aún.",
+      "reorder": "Reordenar",
+      "status": {
+        "pending": "Pendiente",
+        "confirmed": "Confirmada",
+        "preparing": "En Preparación",
+        "ready": "Lista",
+        "delivered": "Entregada",
+        "cancelled": "Cancelada"
+      }
+    },
+    "language": {
+      "title": "Preferencia de Idioma",
+      "save": "Guardar"
+    }
+  },
+  "dashboard": {
+    "title": "Panel del Propietario",
+    "unauthorized": "Acceso Denegado",
+    "unauthorizedMsg": "No tienes autorización para ver esta página.",
+    "autoRefresh": "Actualizando cada 30s",
+    "stats": {
+      "ordersToday": "Órdenes Hoy",
+      "revenueToday": "Ingresos Hoy",
+      "customers": "Total de Clientes",
+      "pending": "Órdenes Pendientes"
+    },
+    "orders": {
+      "title": "Órdenes en Vivo",
+      "empty": "No hay órdenes activas.",
+      "customer": "Cliente",
+      "items": "Artículos",
+      "type": "Tipo",
+      "address": "Dirección",
+      "total": "Total",
+      "points": "Pts Ganados",
+      "status": "Estado",
+      "time": "Hora",
+      "pickup": "Para Llevar",
+      "delivery": "A Domicilio"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmada",
+      "preparing": "En Preparación",
+      "ready": "Lista",
+      "delivered": "Entregada",
+      "cancelled": "Cancelada"
+    }
+  },
+  "chat": {
+    "title": "Asistente Toss",
+    "placeholder": "Pregúntame lo que quieras…",
+    "send": "Enviar",
+    "thinking": "Pensando…",
+    "greeting": "¡Hola! Soy el Asistente de Tennessee Toss. Puedo ayudarte a encontrar la ensalada perfecta, contarte sobre nuestros ingredientes o explicarte cómo funciona nuestro programa de recompensas. ¿Qué se te antoja hoy?"
+  }
+}

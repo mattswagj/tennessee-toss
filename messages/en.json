@@ -1,0 +1,194 @@
+{
+  "nav": {
+    "home": "Home",
+    "menu": "Menu",
+    "buildSalad": "Build Your Salad",
+    "account": "Account"
+  },
+  "hero": {
+    "tagline": "Crafted Fresh Daily",
+    "subtitle": "Fresh ingredients, bold Tennessee flavors, every single day.",
+    "orderNow": "Order Now"
+  },
+  "features": {
+    "title": "Why Tennessee Toss?",
+    "fresh": {
+      "title": "Fresh Ingredients",
+      "description": "Locally sourced produce delivered daily for maximum freshness."
+    },
+    "bold": {
+      "title": "Bold Flavors",
+      "description": "Unique Tennessee-inspired dressings and toppings you won't find anywhere else."
+    },
+    "rewards": {
+      "title": "Earn Rewards",
+      "description": "Every order earns you points redeemable for free items and discounts."
+    }
+  },
+  "menuPreview": {
+    "title": "Featured Items",
+    "viewAll": "View Full Menu",
+    "addToCart": "Add to Cart"
+  },
+  "menu": {
+    "title": "Our Menu",
+    "subtitle": "Fresh, bold, and crafted just for you.",
+    "all": "All",
+    "vegan": "Vegan",
+    "keto": "Keto",
+    "glutenFree": "Gluten-Free",
+    "addToCart": "Add to Cart",
+    "noItems": "No items found."
+  },
+  "builder": {
+    "title": "Build Your Salad",
+    "subtitle": "Craft your perfect bowl, step by step.",
+    "stepOf": "Step {current} of {total}",
+    "back": "Back",
+    "next": "Next",
+    "addToCart": "Add to Cart",
+    "runningTotal": "Running Total",
+    "optional": "Optional — skip if you'd like",
+    "step1Label": "Choose Your Base",
+    "step2Label": "Choose Toppings",
+    "step3Label": "Add Protein",
+    "step4Label": "Choose Dressing",
+    "step5Label": "Review Order",
+    "bases": {
+      "romaine": "Romaine",
+      "spinach": "Spinach",
+      "mixed": "Mixed Greens",
+      "kale": "Kale"
+    },
+    "toppingsTitle": "Select your toppings (included free)",
+    "toppings": {
+      "tomatoes": "Tomatoes",
+      "cucumbers": "Cucumbers",
+      "redOnion": "Red Onion",
+      "corn": "Corn",
+      "croutons": "Croutons",
+      "avocado": "Avocado",
+      "baconBits": "Bacon Bits"
+    },
+    "proteinTitle": "Add a Protein",
+    "dressingTitle": "Choose a Dressing",
+    "noProtein": "No protein",
+    "noDressing": "No dressing",
+    "review": {
+      "title": "Your Custom Salad",
+      "base": "Base",
+      "toppings": "Toppings",
+      "protein": "Protein",
+      "dressing": "Dressing",
+      "none": "None",
+      "total": "Total"
+    }
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty.",
+    "startOrder": "Start an Order",
+    "customSalad": "Custom Salad",
+    "subtotal": "Subtotal",
+    "tax": "Tax (8%)",
+    "total": "Total",
+    "remove": "Remove",
+    "orderType": "Order Type",
+    "pickup": "Pickup",
+    "delivery": "Delivery",
+    "deliveryAddress": "Delivery Address",
+    "deliveryPlaceholder": "Enter your full delivery address",
+    "loyalty": {
+      "title": "Loyalty Points",
+      "balance": "Your Balance",
+      "points": "pts",
+      "redeem": "Redeem Points",
+      "redeemPlaceholder": "Points to redeem",
+      "applyBtn": "Apply",
+      "applied": "Discount Applied",
+      "remove": "Remove",
+      "willEarn": "You will earn {points} pts with this order",
+      "signIn": "Sign in to earn & redeem loyalty points"
+    },
+    "checkout": "Proceed to Checkout"
+  },
+  "account": {
+    "title": "My Account",
+    "signIn": "Sign In",
+    "signUp": "Create Account",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full Name",
+    "signingIn": "Signing in…",
+    "signingUp": "Creating account…",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "loyalty": {
+      "title": "Loyalty Points",
+      "balance": "{points} points",
+      "progress": "{points} points to next reward (every 500 pts)",
+      "rewards": "Available Rewards",
+      "noRewards": "No rewards available yet.",
+      "redeem": "Redeem"
+    },
+    "orders": {
+      "title": "Order History",
+      "noOrders": "No orders yet.",
+      "reorder": "Reorder",
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "preparing": "Preparing",
+        "ready": "Ready",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      }
+    },
+    "language": {
+      "title": "Language Preference",
+      "save": "Save"
+    }
+  },
+  "dashboard": {
+    "title": "Owner Dashboard",
+    "unauthorized": "Access Denied",
+    "unauthorizedMsg": "You are not authorized to view this page.",
+    "autoRefresh": "Auto-refreshing every 30s",
+    "stats": {
+      "ordersToday": "Orders Today",
+      "revenueToday": "Revenue Today",
+      "customers": "Total Customers",
+      "pending": "Pending Orders"
+    },
+    "orders": {
+      "title": "Live Orders",
+      "empty": "No active orders.",
+      "customer": "Customer",
+      "items": "Items",
+      "type": "Type",
+      "address": "Address",
+      "total": "Total",
+      "points": "Pts Earned",
+      "status": "Status",
+      "time": "Time",
+      "pickup": "Pickup",
+      "delivery": "Delivery"
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "chat": {
+    "title": "Toss Assistant",
+    "placeholder": "Ask me anything about our menu…",
+    "send": "Send",
+    "thinking": "Thinking…",
+    "greeting": "Hey there! I'm the Tennessee Toss Assistant. I can help you find the perfect salad, tell you about our ingredients, or explain how our loyalty rewards work. What sounds good today?"
+  }
+}

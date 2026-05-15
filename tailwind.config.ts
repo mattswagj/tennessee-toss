@@ -9,8 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: {
+          DEFAULT: "#8FAF6E",
+          hover: "#7a9a5a",
+        },
+        cream: "#F5F0E8",
+        brown: {
+          DEFAULT: "#6B4C2A",
+          hover: "#5a3e23",
+        },
+      },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "Arial", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
       },
     },
   },
