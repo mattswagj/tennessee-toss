@@ -43,6 +43,7 @@ const STATUS_OPTIONS = [
   "confirmed",
   "preparing",
   "ready",
+  "completed",
   "delivered",
   "cancelled",
 ] as const;
@@ -50,10 +51,11 @@ const STATUS_OPTIONS = [
 type OrderStatus = (typeof STATUS_OPTIONS)[number];
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
+  pending:   "bg-yellow-100 text-yellow-700 border-yellow-200",
   confirmed: "bg-blue-100 text-blue-700 border-blue-200",
   preparing: "bg-orange-100 text-orange-700 border-orange-200",
-  ready: "bg-green-100 text-green-700 border-green-200",
+  ready:     "bg-green-100 text-green-700 border-green-200",
+  completed: "bg-primary/10 text-primary border-primary/20",
   delivered: "bg-gray-100 text-gray-600 border-gray-200",
   cancelled: "bg-red-100 text-red-600 border-red-200",
 };

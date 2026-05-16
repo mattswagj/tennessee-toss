@@ -1,31 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { createClient } from "@/lib/supabase";
+import { redeemReward } from "@/actions/loyalty";
+import { MemberCard } from "@/components/loyalty/MemberCard";
+import { PointsBalance } from "@/components/loyalty/PointsBalance";
+import { RewardTierProgress } from "@/components/loyalty/RewardTierProgress";
+import { TransactionList } from "@/components/loyalty/TransactionList";
+import { RedemptionCode } from "@/components/loyalty/RedemptionCode";
 import { toast } from "sonner";
+import type { LoyaltyProfile, LoyaltyTransaction, Redemption, LoyaltyReward } from "@/types/loyalty";
 
 // ── Types ─────────────────────────────────────────────────────
-
-interface Profile {
-  id: string;
-  full_name: string | null;
-  email: string;
-  loyalty_points: number;
-  preferred_language: string;
-}
-
-interface Reward {
-  id: string;
-  name_en: string;
-  name_es: string;
-  description_en: string | null;
-  description_es: string | null;
-  points_required: number;
-}
 
 interface Order {
   id: string;
@@ -41,55 +31,100 @@ interface Order {
   }[];
 }
 
-// ── Status badge ──────────────────────────────────────────────
-
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-700",
+  pending:   "bg-yellow-100 text-yellow-700",
   confirmed: "bg-blue-100 text-blue-700",
   preparing: "bg-orange-100 text-orange-700",
-  ready: "bg-green-100 text-green-700",
+  ready:     "bg-green-100 text-green-700",
   delivered: "bg-gray-100 text-gray-600",
   cancelled: "bg-red-100 text-red-600",
+  completed: "bg-primary/10 text-primary",
 };
 
 function StatusBadge({ status, label }: { status: string; label: string }) {
   return (
-    <span
-      className={`text-xs font-semibold px-2 py-1 rounded-full ${
-        STATUS_COLORS[status] ?? "bg-gray-100 text-gray-600"
-      }`}
-    >
+    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${STATUS_COLORS[status] ?? "bg-gray-100 text-gray-600"}`}>
       {label}
     </span>
   );
+}
+
+// ── Phone validation (E.164, US default) ─────────────────────
+
+const PHONE_RE = /^\+1[2-9]\d{9}$|^\+[1-9]\d{7,14}$/;
+
+function normalizePhone(raw: string): string {
+  const stripped = raw.replace(/\D/g, "");
+  if (stripped.length === 10) return `+1${stripped}`;
+  if (stripped.length === 11 && stripped.startsWith("1")) return `+${stripped}`;
+  return raw.startsWith("+") ? raw : `+${stripped}`;
 }
 
 // ── Auth forms ────────────────────────────────────────────────
 
 function AuthForms({ t }: { t: ReturnType<typeof useTranslations> }) {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email,     setEmail]     = useState("");
+  const [password,  setPassword]  = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName,  setLastName]  = useState("");
+  const [phone,     setPhone]     = useState("");
+  const [phoneErr,  setPhoneErr]  = useState("");
+  const [loading,   setLoading]   = useState(false);
+
+  const validatePhone = (raw: string) => {
+    if (!raw) return t("account.phoneRequired");
+    const normalized = normalizePhone(raw);
+    if (!PHONE_RE.test(normalized)) return t("account.phoneInvalid");
+    return "";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     const supabase = createClient();
 
     if (mode === "signin") {
+      setLoading(true);
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) toast.error(error.message);
-    } else {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } },
-      });
-      if (error) toast.error(error.message);
-      else toast.success("Account created! Check your email to confirm.");
+      setLoading(false);
+      return;
     }
+
+    // Signup validation
+    const pErr = validatePhone(phone);
+    if (pErr) { setPhoneErr(pErr); return; }
+    setPhoneErr("");
+
+    setLoading(true);
+    const normalized = normalizePhone(phone);
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: fullName } },
+    });
+
+    if (error) {
+      toast.error(error.message);
+      setLoading(false);
+      return;
+    }
+
+    // Upsert profile with extra fields
+    if (data.user) {
+      await supabase.from("profiles").upsert({
+        id:         data.user.id,
+        email:      data.user.email ?? email,
+        full_name:  fullName,
+        first_name: firstName,
+        last_name:  lastName,
+        phone:      normalized,
+      });
+    }
+
+    toast.success(t("account.signupSuccess"));
     setLoading(false);
   };
 
@@ -103,9 +138,7 @@ function AuthForms({ t }: { t: ReturnType<typeof useTranslations> }) {
               key={m}
               onClick={() => setMode(m)}
               className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-                mode === m
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-400 hover:text-gray-600"
+                mode === m ? "text-primary border-b-2 border-primary" : "text-gray-400 hover:text-gray-600"
               }`}
             >
               {t(`account.${m === "signin" ? "signIn" : "signUp"}`)}
@@ -115,23 +148,55 @@ function AuthForms({ t }: { t: ReturnType<typeof useTranslations> }) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {mode === "signup" && (
-            <div>
-              <label className="text-xs font-medium text-gray-500 block mb-1">
-                {t("account.fullName")}
-              </label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary transition-colors"
-                required={mode === "signup"}
-              />
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-gray-500 block mb-1">
+                    {t("account.firstName")}
+                  </label>
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary transition-colors"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-500 block mb-1">
+                    {t("account.lastName")}
+                  </label>
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary transition-colors"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-500 block mb-1">
+                  {t("account.phone")}
+                  <span className="text-gray-300 font-normal ml-1">{t("account.phoneHint")}</span>
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => { setPhone(e.target.value); setPhoneErr(""); }}
+                  placeholder="+1 (555) 000-0000"
+                  className={`w-full border rounded-xl px-3 py-2 text-sm outline-none transition-colors ${
+                    phoneErr ? "border-red-400 focus:border-red-400" : "border-gray-200 focus:border-primary"
+                  }`}
+                  required
+                />
+                {phoneErr && <p className="text-xs text-red-500 mt-1">{phoneErr}</p>}
+              </div>
+            </>
           )}
+
           <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">
-              {t("account.email")}
-            </label>
+            <label className="text-xs font-medium text-gray-500 block mb-1">{t("account.email")}</label>
             <input
               type="email"
               value={email}
@@ -141,9 +206,7 @@ function AuthForms({ t }: { t: ReturnType<typeof useTranslations> }) {
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">
-              {t("account.password")}
-            </label>
+            <label className="text-xs font-medium text-gray-500 block mb-1">{t("account.password")}</label>
             <input
               type="password"
               value={password}
@@ -152,6 +215,7 @@ function AuthForms({ t }: { t: ReturnType<typeof useTranslations> }) {
               required
             />
           </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -167,20 +231,14 @@ function AuthForms({ t }: { t: ReturnType<typeof useTranslations> }) {
           {mode === "signin" ? (
             <>
               {t("account.noAccount")}{" "}
-              <button
-                onClick={() => setMode("signup")}
-                className="text-primary font-semibold hover:underline"
-              >
+              <button onClick={() => setMode("signup")} className="text-primary font-semibold hover:underline">
                 {t("account.signUp")}
               </button>
             </>
           ) : (
             <>
               {t("account.haveAccount")}{" "}
-              <button
-                onClick={() => setMode("signin")}
-                className="text-primary font-semibold hover:underline"
-              >
+              <button onClick={() => setMode("signin")} className="text-primary font-semibold hover:underline">
                 {t("account.signIn")}
               </button>
             </>
@@ -199,19 +257,20 @@ export default function AccountPage() {
   const { user, loading: authLoading } = useAuth();
   const { addItem } = useCart();
 
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [rewards, setRewards] = useState<Reward[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [dataLoading, setDataLoading] = useState(true);
+  const [profile,       setProfile]       = useState<LoyaltyProfile | null>(null);
+  const [rewards,       setRewards]       = useState<LoyaltyReward[]>([]);
+  const [orders,        setOrders]        = useState<Order[]>([]);
+  const [transactions,  setTransactions]  = useState<LoyaltyTransaction[]>([]);
+  const [redemptions,   setRedemptions]   = useState<Redemption[]>([]);
+  const [dataLoading,   setDataLoading]   = useState(true);
+  const [activeCode,    setActiveCode]    = useState<string | null>(null);
+  const [redeemingId,   setRedeemingId]   = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!user) {
-      setDataLoading(false);
-      return;
-    }
+  const fetchData = useCallback(async () => {
+    if (!user) { setDataLoading(false); return; }
     const supabase = createClient();
 
-    Promise.all([
+    const [profileRes, rewardsRes, ordersRes, txRes, redemptionsRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).single(),
       supabase.from("rewards").select("*").eq("is_active", true).order("points_required"),
       supabase
@@ -220,13 +279,28 @@ export default function AccountPage() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(20),
-    ]).then(([profileRes, rewardsRes, ordersRes]) => {
-      if (profileRes.data) setProfile(profileRes.data as Profile);
-      if (rewardsRes.data) setRewards(rewardsRes.data as Reward[]);
-      if (ordersRes.data) setOrders(ordersRes.data as Order[]);
-      setDataLoading(false);
-    });
+      supabase
+        .from("loyalty_transactions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(100),
+      supabase
+        .from("redemptions")
+        .select("*, rewards(name_en, name_es, points_required)")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false }),
+    ]);
+
+    if (profileRes.data) setProfile(profileRes.data as LoyaltyProfile);
+    if (rewardsRes.data) setRewards(rewardsRes.data as LoyaltyReward[]);
+    if (ordersRes.data)  setOrders(ordersRes.data as Order[]);
+    if (txRes.data)      setTransactions(txRes.data as LoyaltyTransaction[]);
+    if (redemptionsRes.data) setRedemptions(redemptionsRes.data as Redemption[]);
+    setDataLoading(false);
   }, [user]);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleSignOut = async () => {
     const supabase = createClient();
@@ -237,46 +311,52 @@ export default function AccountPage() {
   const handleSaveLanguage = async () => {
     if (!user) return;
     const supabase = createClient();
-    await supabase
-      .from("profiles")
-      .update({ preferred_language: locale })
-      .eq("id", user.id);
+    await supabase.from("profiles").update({ preferred_language: locale }).eq("id", user.id);
     toast.success(locale === "es" ? "Preferencia guardada" : "Language preference saved");
   };
 
   const handleReorder = async (order: Order) => {
     const supabase = createClient();
-    const itemIds = order.order_items
-      .map((oi) => oi.menu_item_id)
-      .filter(Boolean);
-    if (itemIds.length === 0) return;
-
-    const { data } = await supabase
-      .from("menu_items")
-      .select("*")
-      .in("id", itemIds);
-
+    const itemIds = order.order_items.map((oi) => oi.menu_item_id).filter(Boolean);
+    if (!itemIds.length) return;
+    const { data } = await supabase.from("menu_items").select("*").in("id", itemIds);
     if (data) {
       data.forEach((item) => addItem(item as Parameters<typeof addItem>[0]));
       toast.success(locale === "es" ? "Artículos agregados al carrito" : "Items added to cart!");
     }
   };
 
-  const handleRedeemReward = async (reward: Reward) => {
-    if (!profile || profile.loyalty_points < reward.points_required) {
-      toast.error(locale === "es" ? "No tienes suficientes puntos" : "Not enough points");
+  const handleRedeem = async (reward: LoyaltyReward) => {
+    if (!profile || profile.current_points < reward.points_required) {
+      toast.error(t("account.loyalty.notEnoughPoints"));
       return;
     }
-    toast.info(locale === "es" ? "Función próximamente" : "Redemption coming soon!");
+    setRedeemingId(reward.id);
+    const result = await redeemReward(reward.id);
+    setRedeemingId(null);
+
+    if ("error" in result) {
+      toast.error(result.error);
+      return;
+    }
+
+    setActiveCode(result.code);
+    // Optimistically update points
+    setProfile((prev) =>
+      prev ? { ...prev, current_points: prev.current_points - reward.points_required } : prev
+    );
+    await fetchData();
   };
 
-  const NEXT_REWARD_THRESHOLD = 500;
-  const progressPct = profile
-    ? Math.min((profile.loyalty_points % NEXT_REWARD_THRESHOLD) / NEXT_REWARD_THRESHOLD * 100, 100)
-    : 0;
-  const pointsToNext = profile
-    ? NEXT_REWARD_THRESHOLD - (profile.loyalty_points % NEXT_REWARD_THRESHOLD)
-    : NEXT_REWARD_THRESHOLD;
+  // This-month points
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const thisMonthPoints = transactions
+    .filter((tx) => tx.points > 0 && new Date(tx.created_at) >= monthStart)
+    .reduce((sum, tx) => sum + tx.points, 0);
+
+  const pendingRedemptions = redemptions.filter((r) => r.status === "pending");
 
   if (authLoading) {
     return (
@@ -288,16 +368,23 @@ export default function AccountPage() {
 
   return (
     <main className="min-h-screen bg-cream">
+      {activeCode && (
+        <RedemptionCode
+          code={activeCode}
+          onClose={() => setActiveCode(null)}
+        />
+      )}
+
       <div className="bg-brown py-10 px-6 text-center">
         <h1 className="text-3xl font-bold text-white">{t("account.title")}</h1>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+      <div className="max-w-2xl mx-auto px-4 py-8 space-y-5">
         {!user ? (
           <AuthForms t={t} />
         ) : dataLoading ? (
           <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="h-24 bg-white rounded-2xl animate-pulse" />
             ))}
           </div>
@@ -307,9 +394,14 @@ export default function AccountPage() {
             <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between gap-4">
               <div>
                 <p className="font-bold text-brown text-lg">
-                  {profile?.full_name ?? user.email}
+                  {profile
+                    ? (profile.first_name || profile.last_name
+                        ? `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim()
+                        : profile.full_name ?? user.email)
+                    : user.email}
                 </p>
                 <p className="text-sm text-gray-400">{user.email}</p>
+                {profile?.phone && <p className="text-xs text-gray-400">{profile.phone}</p>}
               </div>
               <button
                 onClick={handleSignOut}
@@ -319,36 +411,31 @@ export default function AccountPage() {
               </button>
             </div>
 
-            {/* Loyalty points */}
-            <div className="bg-white rounded-2xl p-5 shadow-sm">
-              <h2 className="font-bold text-brown text-lg mb-4">
-                {t("account.loyalty.title")}
-              </h2>
-              <div className="flex items-end justify-between mb-3">
-                <p className="text-3xl font-bold text-primary">
-                  {profile?.loyalty_points ?? 0}
-                </p>
-                <p className="text-sm text-gray-400">
-                  {t("account.loyalty.balance", { points: profile?.loyalty_points ?? 0 })}
-                </p>
-              </div>
-              {/* Progress bar */}
-              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden mb-2">
-                <div
-                  className="bg-primary h-3 rounded-full transition-all duration-700"
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
-              <p className="text-xs text-gray-400">
-                {t("account.loyalty.progress", { points: pointsToNext })}
-              </p>
-            </div>
+            {/* Member card */}
+            <MemberCard
+              memberNumber={profile?.member_number ?? null}
+              name={
+                profile
+                  ? (profile.first_name || profile.last_name
+                      ? `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim()
+                      : profile.full_name ?? null)
+                  : null
+              }
+            />
+
+            {/* Points balance */}
+            <PointsBalance
+              current={profile?.current_points ?? 0}
+              thisMonth={thisMonthPoints}
+              lifetime={profile?.lifetime_points ?? 0}
+            />
+
+            {/* Reward tiers */}
+            <RewardTierProgress currentPoints={profile?.current_points ?? 0} />
 
             {/* Available rewards */}
             <div className="bg-white rounded-2xl p-5 shadow-sm">
-              <h2 className="font-bold text-brown text-lg mb-4">
-                {t("account.loyalty.rewards")}
-              </h2>
+              <h2 className="font-bold text-brown text-lg mb-4">{t("account.loyalty.rewards")}</h2>
               {rewards.length === 0 ? (
                 <p className="text-sm text-gray-400">{t("account.loyalty.noRewards")}</p>
               ) : (
@@ -356,7 +443,7 @@ export default function AccountPage() {
                   {rewards.map((r) => {
                     const name = locale === "es" ? r.name_es : r.name_en;
                     const desc = locale === "es" ? r.description_es : r.description_en;
-                    const canRedeem = (profile?.loyalty_points ?? 0) >= r.points_required;
+                    const canRedeem = (profile?.current_points ?? 0) >= r.points_required;
                     return (
                       <div
                         key={r.id}
@@ -366,15 +453,15 @@ export default function AccountPage() {
                           <p className="font-semibold text-brown text-sm">{name}</p>
                           {desc && <p className="text-xs text-gray-400">{desc}</p>}
                           <p className="text-xs text-primary font-semibold mt-0.5">
-                            {r.points_required} pts
+                            {r.points_required.toLocaleString()} pts
                           </p>
                         </div>
                         <button
-                          onClick={() => handleRedeemReward(r)}
-                          disabled={!canRedeem}
+                          onClick={() => handleRedeem(r)}
+                          disabled={!canRedeem || redeemingId === r.id}
                           className="bg-primary disabled:opacity-40 hover:bg-primary-hover text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
                         >
-                          {t("account.loyalty.redeem")}
+                          {redeemingId === r.id ? "…" : t("account.loyalty.redeem")}
                         </button>
                       </div>
                     );
@@ -383,20 +470,51 @@ export default function AccountPage() {
               )}
             </div>
 
+            {/* Pending redemptions */}
+            {pendingRedemptions.length > 0 && (
+              <div className="bg-white rounded-2xl p-5 shadow-sm">
+                <h2 className="font-bold text-brown text-lg mb-4">
+                  {t("account.loyalty.pendingRedemptions")}
+                </h2>
+                <div className="space-y-3">
+                  {pendingRedemptions.map((r) => (
+                    <div
+                      key={r.id}
+                      className="flex items-center justify-between gap-3 p-3 rounded-xl bg-cream"
+                    >
+                      <div>
+                        <p className="font-mono font-bold text-xl text-brown tracking-widest">
+                          {r.redemption_code}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {locale === "es" ? r.rewards?.name_es : r.rewards?.name_en}
+                        </p>
+                        <p className="text-xs text-gray-400">{r.points_cost} pts</p>
+                      </div>
+                      <button
+                        onClick={() => setActiveCode(r.redemption_code)}
+                        className="bg-brown hover:bg-brown-hover text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        {t("account.loyalty.showCode")}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Transaction history */}
+            <TransactionList transactions={transactions} />
+
             {/* Order history */}
             <div className="bg-white rounded-2xl p-5 shadow-sm">
-              <h2 className="font-bold text-brown text-lg mb-4">
-                {t("account.orders.title")}
-              </h2>
+              <h2 className="font-bold text-brown text-lg mb-4">{t("account.orders.title")}</h2>
               {orders.length === 0 ? (
                 <p className="text-sm text-gray-400">{t("account.orders.noOrders")}</p>
               ) : (
                 <div className="space-y-4">
                   {orders.map((order) => (
-                    <div
-                      key={order.id}
-                      className="border border-gray-100 rounded-xl p-4"
-                    >
+                    <div key={order.id} className="border border-gray-100 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-xs text-gray-400">
                           {new Date(order.created_at).toLocaleDateString(
@@ -406,9 +524,7 @@ export default function AccountPage() {
                         </p>
                         <StatusBadge
                           status={order.status}
-                          label={
-                            t(`account.orders.status.${order.status as "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"}`)
-                          }
+                          label={t(`account.orders.status.${order.status as "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"}`) ?? order.status}
                         />
                       </div>
                       <div className="space-y-0.5 mb-3">
@@ -416,17 +532,13 @@ export default function AccountPage() {
                           <p key={oi.id} className="text-sm text-gray-700">
                             {oi.quantity}×{" "}
                             {oi.menu_items
-                              ? locale === "es"
-                                ? oi.menu_items.name_es
-                                : oi.menu_items.name_en
+                              ? locale === "es" ? oi.menu_items.name_es : oi.menu_items.name_en
                               : "Item"}
                           </p>
                         ))}
                       </div>
                       <div className="flex items-center justify-between">
-                        <p className="font-bold text-brown">
-                          ${order.total_amount.toFixed(2)}
-                        </p>
+                        <p className="font-bold text-brown">${order.total_amount.toFixed(2)}</p>
                         <button
                           onClick={() => handleReorder(order)}
                           className="text-xs text-primary font-semibold hover:underline"
@@ -442,9 +554,7 @@ export default function AccountPage() {
 
             {/* Language preference */}
             <div className="bg-white rounded-2xl p-5 shadow-sm">
-              <h2 className="font-bold text-brown text-lg mb-4">
-                {t("account.language.title")}
-              </h2>
+              <h2 className="font-bold text-brown text-lg mb-4">{t("account.language.title")}</h2>
               <div className="flex gap-3">
                 <div className="flex rounded-xl overflow-hidden border border-gray-200 flex-1">
                   {(["en", "es"] as const).map((l) => (
@@ -452,9 +562,7 @@ export default function AccountPage() {
                       key={l}
                       onClick={() => locale !== l && toggleLanguage()}
                       className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-                        locale === l
-                          ? "bg-primary text-white"
-                          : "text-gray-500 hover:bg-cream"
+                        locale === l ? "bg-primary text-white" : "text-gray-500 hover:bg-cream"
                       }`}
                     >
                       {l === "en" ? "English" : "Español"}
