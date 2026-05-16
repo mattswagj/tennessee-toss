@@ -8,9 +8,10 @@ import { useCart, type CartItem } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
+import { EmptyBowl } from "@/components/illustrations/EmptyBowl";
 
 const TAX_RATE = 0.08;
-const POINTS_PER_DOLLAR = 1;
+const POINTS_PER_DOLLAR = 10;
 const CENTS_PER_POINT = 0.01; // 100 pts = $1
 
 function QuantityButton({
@@ -132,11 +133,11 @@ export default function CartPage() {
     const supabase = createClient();
     supabase
       .from("profiles")
-      .select("loyalty_points")
+      .select("current_points")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setLoyaltyBalance(data.loyalty_points ?? 0);
+        if (data) setLoyaltyBalance(data.current_points ?? 0);
       });
   }, [user]);
 
@@ -168,12 +169,12 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <main className="min-h-screen bg-cream flex flex-col items-center justify-center px-4 text-center">
-        <span className="text-6xl mb-4">🛒</span>
-        <h1 className="text-2xl font-bold text-brown mb-2">{t("cart.title")}</h1>
-        <p className="text-gray-400 mb-8">{t("cart.empty")}</p>
+        <EmptyBowl size={140} className="mb-6 opacity-80" />
+        <h1 className="font-serif text-2xl font-bold text-brown mb-2">{t("cart.title")}</h1>
+        <p className="text-brown/50 mb-8">{t("cart.empty")}</p>
         <Link
           href="/menu"
-          className="bg-primary hover:bg-primary-hover text-white font-semibold px-8 py-3 rounded-full transition-colors"
+          className="bg-brown hover:bg-brown-700 text-cream font-semibold px-8 py-3 rounded-full transition-colors shadow-soft"
         >
           {t("cart.startOrder")}
         </Link>

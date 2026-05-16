@@ -25,6 +25,22 @@
       "description": "Every order earns you points redeemable for free items and discounts."
     }
   },
+  "home": {
+    "buildOwn": "Build Your Own",
+    "storyEyebrow": "Our Story",
+    "storyTitle": "Born in Lebanon, Tennessee",
+    "storyBody": "Tennessee Toss started with a simple idea: fresh salads made daily from locally sourced ingredients, with bold Southern flavors you can feel good about. Every bowl is hand-tossed to order — no shortcuts, no sitting under a heat lamp.",
+    "storyInstagram": "Follow us on Instagram",
+    "loyaltyEyebrow": "Rewards",
+    "loyaltyTitle": "Every Bite Earns Points",
+    "loyaltyBody": "Join our loyalty program and earn 10 points for every dollar spent. Redeem for free dressings, discounts, or a whole salad on us.",
+    "tier1": "Free Dressing",
+    "tier2": "$5 Off",
+    "tier3": "Free Salad",
+    "loyaltyCta": "Join Free — Sign Up",
+    "menuEyebrow": "Fresh Today",
+    "footerTagline": "Crafted fresh daily in Lebanon, TN"
+  },
   "menuPreview": {
     "title": "Featured Items",
     "viewAll": "View Full Menu",

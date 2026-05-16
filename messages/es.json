@@ -25,6 +25,22 @@
       "description": "Cada orden te da puntos canjeables por artículos gratis y descuentos."
     }
   },
+  "home": {
+    "buildOwn": "Arma la Tuya",
+    "storyEyebrow": "Nuestra Historia",
+    "storyTitle": "Nacidos en Lebanon, Tennessee",
+    "storyBody": "Tennessee Toss nació con una idea simple: ensaladas frescas preparadas a diario con ingredientes locales y sabores sureños que te hacen sentir bien. Cada tazón se prepara a mano al momento — sin atajos, sin procesos industriales.",
+    "storyInstagram": "Síguenos en Instagram",
+    "loyaltyEyebrow": "Recompensas",
+    "loyaltyTitle": "Cada Mordida Suma Puntos",
+    "loyaltyBody": "Únete a nuestro programa de lealtad y gana 10 puntos por cada dólar gastado. Canjéalos por aderezos gratis, descuentos o una ensalada completa.",
+    "tier1": "Aderezo Gratis",
+    "tier2": "$5 de Descuento",
+    "tier3": "Ensalada Gratis",
+    "loyaltyCta": "Únete Gratis — Regístrate",
+    "menuEyebrow": "Fresco Hoy",
+    "footerTagline": "Preparado fresco cada día en Lebanon, TN"
+  },
   "menuPreview": {
     "title": "Artículos Destacados",
     "viewAll": "Ver Menú Completo",

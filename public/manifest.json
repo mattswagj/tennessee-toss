@@ -1,0 +1,39 @@
+{
+  "name": "Tennessee Toss",
+  "short_name": "TN Toss",
+  "description": "Fresh handcrafted salads made daily in Lebanon, Tennessee.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F0E8",
+  "theme_color": "#8FAF6E",
+  "orientation": "portrait-primary",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Order Now",
+      "short_name": "Order",
+      "url": "/menu",
+      "description": "Browse the menu and order"
+    },
+    {
+      "name": "My Account",
+      "short_name": "Account",
+      "url": "/account",
+      "description": "View loyalty points and account"
+    }
+  ]
+}
