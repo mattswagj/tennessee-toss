@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { createClient, type MenuItem, type MenuCategory } from "@/lib/supabase";
 import { toast } from "sonner";
+import { EmptyBowl } from "@/components/illustrations/EmptyBowl";
 
 type DietaryFilter = "vegan" | "keto" | "glutenFree";
 
@@ -178,9 +180,27 @@ export default function MenuPage() {
             ))}
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="text-center py-24 text-gray-400">
-            <span className="text-5xl block mb-4">🥗</span>
-            <p>{t("noItems")}</p>
+          <div className="text-center py-24 flex flex-col items-center gap-4">
+            <EmptyBowl size={100} className="opacity-60" aria-hidden="true" />
+            <p className="font-serif text-xl font-semibold text-brown">{t("noItems")}</p>
+            <p className="text-brown/50 text-sm">
+              {activeCategoryId || activeDietary
+                ? "Try clearing your filters / Intenta quitar los filtros"
+                : "Check back soon! / ¡Vuelve pronto!"}
+            </p>
+            {(activeCategoryId || activeDietary) && (
+              <button
+                onClick={() => { setActiveCategoryId(null); setActiveDietary(null); }}
+                className="bg-primary text-white px-6 py-2 rounded-xl font-semibold text-sm hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+              >
+                Clear filters / Quitar filtros
+              </button>
+            )}
+            {!activeCategoryId && !activeDietary && (
+              <Link href="/build" className="bg-primary text-white px-6 py-2 rounded-xl font-semibold text-sm hover:bg-primary-hover transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none">
+                Build your own / Arma la tuya
+              </Link>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

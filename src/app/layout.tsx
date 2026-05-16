@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import ChatWidget from "@/components/ChatWidget";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
+import { HtmlLang } from "@/components/HtmlLang";
 import { Toaster } from "sonner";
 
 // ── Local fonts ────────────────────────────────────────────────
@@ -41,10 +42,25 @@ const playfair = Playfair_Display({
 
 // ── Metadata ───────────────────────────────────────────────────
 
+const BASE_URL = "https://tennessee-toss.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Tennessee Toss — Crafted Fresh Daily",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "Tennessee Toss | Fresh Handcrafted Salads in Lebanon, TN",
+    template: "%s | Tennessee Toss",
+  },
   description:
-    "Fresh handcrafted salads made daily in Lebanon, Tennessee. Bold flavors, healthy recipes, and a rewards program that makes every bite count.",
+    "Bold flavors, fresh ingredients, crafted fresh daily. Order salads online or build your own. Earn rewards every visit. Lebanon, Tennessee.",
+  keywords: [
+    "salads",
+    "Lebanon Tennessee",
+    "fresh",
+    "healthy food",
+    "online ordering",
+    "salad bowl",
+    "loyalty rewards",
+  ],
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -59,9 +75,44 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "Tennessee Toss — Crafted Fresh Daily",
-    description: "Fresh handcrafted salads made daily in Lebanon, Tennessee.",
     type: "website",
+    siteName: "Tennessee Toss",
+    locale: "en_US",
+    alternateLocale: ["es_US"],
+    url: BASE_URL,
+    title: "Tennessee Toss | Fresh Handcrafted Salads in Lebanon, TN",
+    description:
+      "Bold flavors, fresh ingredients, crafted fresh daily. Order salads online or build your own. Earn rewards every visit.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Tennessee Toss — Fresh Handcrafted Salads",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tennessee Toss | Fresh Handcrafted Salads in Lebanon, TN",
+    description:
+      "Bold flavors, fresh ingredients, crafted fresh daily. Order salads online or build your own.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: BASE_URL,
+    languages: {
+      en: `${BASE_URL}/en`,
+      es: `${BASE_URL}/es`,
+    },
+  },
+  other: {
+    "msapplication-TileColor": "#8FAF6E",
+    "color-scheme": "light",
   },
 };
 
@@ -69,6 +120,7 @@ export const viewport: Viewport = {
   themeColor: "#8FAF6E",
   width: "device-width",
   initialScale: 1,
+  colorScheme: "light",
 };
 
 export default function RootLayout({
@@ -88,6 +140,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${greatVibes.variable} ${playfair.variable} antialiased font-sans`}
       >
         <LanguageProvider>
+          <HtmlLang />
           <AuthProvider>
             <CartProvider>
               <Navbar />

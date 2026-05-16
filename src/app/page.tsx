@@ -11,6 +11,7 @@ import { Wordmark } from "@/components/brand/Wordmark";
 import { SaladBowlIcon } from "@/components/brand/SaladBowlIcon";
 import { CraftedFreshBadge } from "@/components/brand/CraftedFreshBadge";
 import { LeafDecoration } from "@/components/illustrations/LeafDecoration";
+import { ShareButton } from "@/components/ShareButton";
 
 // ── Scroll-animation hook ──────────────────────────────────────
 function useScrollAnimation() {
@@ -31,7 +32,7 @@ function useScrollAnimation() {
 // ── Feature card icons ─────────────────────────────────────────
 function LeafIcon() {
   return (
-    <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8">
+    <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8" aria-hidden="true">
       <path d="M4 28 C8 18 20 10 28 4 C22 16 12 24 4 28Z" fill="#8FAF6E" />
       <path d="M4 28 L18 14" stroke="#5a7a3e" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
@@ -39,7 +40,7 @@ function LeafIcon() {
 }
 function FlameIcon() {
   return (
-    <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8">
+    <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8" aria-hidden="true">
       <path d="M16 28c-5 0-9-4-9-9 0-4 3-7 5-9 0 3 1 5 3 6 0-2 1-5 4-7 1 4 4 6 4 10 0 5-3 9-7 9Z" fill="#e05454" opacity="0.85" />
       <path d="M16 24c-2 0-4-2-4-4 0-2 2-4 2-4s1 2 3 2c2 0 3-2 3-2s1 2 1 4c0 2-3 4-5 4Z" fill="#f07878" opacity="0.7" />
     </svg>
@@ -47,7 +48,7 @@ function FlameIcon() {
 }
 function StarIcon() {
   return (
-    <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8">
+    <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8" aria-hidden="true">
       <path d="M16 4l3 7h8l-6 5 2 8-7-4-7 4 2-8-6-5h8z" fill="#d4a857" />
     </svg>
   );
@@ -124,8 +125,33 @@ export default function HomePage() {
       });
   }, []);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    name: "Tennessee Toss",
+    description:
+      "Bold flavors, fresh ingredients, crafted fresh daily. Order salads online or build your own. Earn rewards every visit.",
+    url: "https://tennessee-toss.vercel.app",
+    servesCuisine: ["Salads", "Healthy", "American"],
+    priceRange: "$$", // TODO: confirm price range
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Lebanon",
+      addressRegion: "TN",
+      addressCountry: "US",
+      // TODO: add streetAddress and postalCode when confirmed
+    },
+    sameAs: ["https://www.instagram.com/tennesseetoss/"],
+    acceptsReservations: false,
+    // TODO: paymentAccepted — will be Stripe
+  };
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── Hero ──────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-100 via-cream to-cream min-h-[88vh] flex items-center">
         {/* Decorative leaves */}
@@ -211,7 +237,7 @@ export default function HomePage() {
             {tHome("storyBody")}
           </p>
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/tennesseetoss/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-brown font-semibold border-b-2 border-primary pb-0.5 hover:text-primary transition-colors"
@@ -308,13 +334,13 @@ export default function HomePage() {
               </div>
               <div className="flex flex-col gap-2 items-center sm:items-start">
                 <span className="font-semibold text-cream uppercase tracking-wide text-xs mb-1">Connect</span>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-cream transition-colors">Instagram</a>
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-cream transition-colors">Facebook</a>
+                <a href="https://www.instagram.com/tennesseetoss/" target="_blank" rel="noopener noreferrer" className="hover:text-cream transition-colors">@tennesseetoss</a>
               </div>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-cream/15 text-center text-cream/40 text-sm">
-            © {new Date().getFullYear()} Tennessee Toss. All rights reserved. · Lebanon, TN
+          <div className="mt-8 pt-8 border-t border-cream/15 flex flex-col sm:flex-row items-center justify-between gap-4 text-cream/40 text-sm">
+            <span>© {new Date().getFullYear()} Tennessee Toss. All rights reserved. · Lebanon, TN</span>
+            <ShareButton />
           </div>
         </div>
       </footer>

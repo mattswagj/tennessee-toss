@@ -216,15 +216,16 @@ export default function CartPage() {
           </div>
           {orderType === "delivery" && (
             <div className="mt-3">
-              <label className="text-xs font-medium text-gray-500 block mb-1">
+              <label htmlFor="delivery-address" className="text-xs font-medium text-gray-500 block mb-1">
                 {t("cart.deliveryAddress")}
               </label>
               <input
+                id="delivery-address"
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder={t("cart.deliveryPlaceholder")}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary transition-colors"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary transition-colors"
               />
             </div>
           )}

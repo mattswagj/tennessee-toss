@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Logo } from "@/components/brand/Logo";
 
 function CartIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="8" cy="21" r="1" />
       <circle cx="19" cy="21" r="1" />
       <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
@@ -19,7 +19,7 @@ function CartIcon() {
 
 function CloseIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
@@ -28,7 +28,7 @@ function CloseIcon() {
 
 function MenuIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <line x1="4" y1="6" x2="20" y2="6" />
       <line x1="4" y1="12" x2="20" y2="12" />
       <line x1="4" y1="18" x2="20" y2="18" />
@@ -42,6 +42,8 @@ export default function Navbar() {
   const { totalItems } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -52,10 +54,19 @@ export default function Navbar() {
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
+      closeButtonRef.current?.focus();
     } else {
       document.body.style.overflow = "";
     }
     return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileOpen) setMobileOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
 
   const navLinks = [
@@ -96,7 +107,8 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <button
               onClick={toggleLanguage}
-              className="text-xs font-bold px-3 py-1 rounded-full border border-brown/30 text-brown hover:bg-brown hover:text-cream transition-colors"
+              aria-label={locale === "en" ? "Switch to Spanish" : "Cambiar a Inglés"}
+              className="text-xs font-bold px-3 py-1 rounded-full border border-brown/30 text-brown hover:bg-brown hover:text-cream transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
             >
               {locale === "en" ? "ES" : "EN"}
             </button>
@@ -132,14 +144,19 @@ export default function Navbar() {
 
           {/* Drawer panel */}
           <div
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
             className="absolute top-0 right-0 h-full w-72 bg-cream shadow-xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b border-brown/10">
               <Logo size="sm" />
               <button
+                ref={closeButtonRef}
                 onClick={() => setMobileOpen(false)}
-                className="p-2 text-brown hover:text-primary transition-colors"
+                className="p-2 text-brown hover:text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-lg"
                 aria-label="Close menu"
               >
                 <CloseIcon />

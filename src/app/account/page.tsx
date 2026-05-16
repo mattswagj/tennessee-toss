@@ -151,36 +151,39 @@ function AuthForms({ t }: { t: ReturnType<typeof useTranslations> }) {
             <>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-500 block mb-1">
+                  <label htmlFor="signup-first-name" className="text-xs font-medium text-gray-500 block mb-1">
                     {t("account.firstName")}
                   </label>
                   <input
+                    id="signup-first-name"
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary transition-colors"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-500 block mb-1">
+                  <label htmlFor="signup-last-name" className="text-xs font-medium text-gray-500 block mb-1">
                     {t("account.lastName")}
                   </label>
                   <input
+                    id="signup-last-name"
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary transition-colors"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary transition-colors"
                     required
                   />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 block mb-1">
+                <label htmlFor="signup-phone" className="text-xs font-medium text-gray-500 block mb-1">
                   {t("account.phone")}
                   <span className="text-gray-300 font-normal ml-1">{t("account.phoneHint")}</span>
                 </label>
                 <input
+                  id="signup-phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => { setPhone(e.target.value); setPhoneErr(""); }}
@@ -196,22 +199,26 @@ function AuthForms({ t }: { t: ReturnType<typeof useTranslations> }) {
           )}
 
           <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">{t("account.email")}</label>
+            <label htmlFor="auth-email" className="text-xs font-medium text-gray-500 block mb-1">{t("account.email")}</label>
             <input
+              id="auth-email"
               type="email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary transition-colors"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary transition-colors"
               required
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-500 block mb-1">{t("account.password")}</label>
+            <label htmlFor="auth-password" className="text-xs font-medium text-gray-500 block mb-1">{t("account.password")}</label>
             <input
+              id="auth-password"
               type="password"
+              autoComplete={mode === "signin" ? "current-password" : "new-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary transition-colors"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary transition-colors"
               required
             />
           </div>
