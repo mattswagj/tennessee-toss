@@ -145,7 +145,8 @@ export default function RootLayout({
             <CartProvider>
               <Navbar />
               {children}
-              <ChatWidget />
+              {/* To re-enable: set NEXT_PUBLIC_ENABLE_CHAT=true in Vercel env vars and redeploy. */}
+              {process.env.NEXT_PUBLIC_ENABLE_CHAT === "true" && <ChatWidget />}
               <InstallPrompt />
               <ServiceWorkerRegistrar />
               <Toaster richColors position="bottom-right" />
