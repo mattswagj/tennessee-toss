@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { createClient, type MenuItem, type MenuCategory } from "@/lib/supabase";
 import { toast } from "sonner";
 import { EmptyBowl } from "@/components/illustrations/EmptyBowl";
+import { PriceDisclaimer } from "@/components/PriceDisclaimer";
 
 type DietaryFilter = "vegan" | "keto" | "glutenFree";
 
@@ -39,20 +40,23 @@ function MenuCard({
   locale,
   addLabel,
   comingSoonLabel,
-  priceComingSoonLabel,
+  freeLabel,
+  priceEstimatedLabel,
 }: {
   item: MenuItem;
   locale: "en" | "es";
   addLabel: string;
   comingSoonLabel: string;
-  priceComingSoonLabel: string;
+  freeLabel: string;
+  priceEstimatedLabel: string;
 }) {
   const { addItem } = useCart();
   const name = locale === "es" ? item.name_es : item.name_en;
   const description = locale === "es" ? item.description_es : item.description_en;
 
   const comingSoon = item.coming_soon || !item.is_available;
-  const priceTbd = !comingSoon && item.price <= 0;
+  // Build-your-own model: $0 toppings/dressings are FREE (included), not "TBD".
+  const isFree = !comingSoon && item.price <= 0;
 
   return (
     <div
@@ -79,8 +83,11 @@ function MenuCard({
         <div className="flex items-start justify-between gap-2 mb-1">
           <h3 className="font-bold text-brown text-base leading-tight">{name}</h3>
           {!comingSoon && (
-            <span className="text-primary font-bold text-sm whitespace-nowrap">
-              {priceTbd ? priceComingSoonLabel : `$${item.price.toFixed(2)}`}
+            <span
+              className="text-primary font-bold text-sm whitespace-nowrap"
+              title={isFree ? undefined : priceEstimatedLabel}
+            >
+              {isFree ? freeLabel : `$${item.price.toFixed(2)}*`}
             </span>
           )}
         </div>
@@ -158,6 +165,11 @@ export default function MenuPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
+        {/* ── Placeholder-price disclaimer (remove once prices confirmed) ── */}
+        <div className="mb-6">
+          <PriceDisclaimer note={t("priceNote")} />
+        </div>
+
         {/* ── Category filters ────────────────────── */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
           <FilterButton
@@ -233,7 +245,8 @@ export default function MenuPage() {
                 locale={locale}
                 addLabel={t("addToCart")}
                 comingSoonLabel={t("comingSoon")}
-                priceComingSoonLabel={t("priceComingSoon")}
+                freeLabel={t("free")}
+                priceEstimatedLabel={t("priceEstimated")}
               />
             ))}
           </div>

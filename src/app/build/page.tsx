@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { createClient, type MenuItem } from "@/lib/supabase";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { PriceDisclaimer } from "@/components/PriceDisclaimer";
 
 // ── Progress bar ──────────────────────────────────────────────
 
@@ -103,6 +104,17 @@ export default function BuildPage() {
 
   const isUnavailable = (item: MenuItem) => item.coming_soon || !item.is_available;
 
+  // All prices are placeholders — show "*" + a disclaimer everywhere.
+  const fmtPrice = (p: number) => `$${p.toFixed(2)}*`;
+  const fmtAddOn = (p: number) => `+$${p.toFixed(2)}*`;
+
+  // Running total: base + paid toppings (e.g. avocado) + protein + dressing.
+  const runningTotal =
+    (selectedBase?.price ?? 0) +
+    selectedToppings.reduce((sum, tp) => sum + (tp.price ?? 0), 0) +
+    (selectedProtein?.price ?? 0) +
+    (selectedDressing?.price ?? 0);
+
   const toggleTopping = (item: MenuItem) => {
     setSelectedToppings((prev) =>
       prev.some((x) => x.id === item.id)
@@ -138,12 +150,8 @@ export default function BuildPage() {
       })),
       protein: selectedProtein,
       dressing: selectedDressing,
-      // Prices are TBD (all $0 for now) — sum what we have.
-      price:
-        (selectedBase.price ?? 0) +
-        selectedToppings.reduce((sum, tp) => sum + (tp.price ?? 0), 0) +
-        (selectedProtein?.price ?? 0) +
-        (selectedDressing?.price ?? 0),
+      // Sum of placeholder prices (base + paid toppings + protein + dressing).
+      price: runningTotal,
     });
 
     toast.success(
@@ -214,6 +222,11 @@ export default function BuildPage() {
           </div>
         </div>
 
+        {/* ── Placeholder-price disclaimer (remove once prices confirmed) ── */}
+        <div className="mb-6">
+          <PriceDisclaimer note={t("priceNote")} />
+        </div>
+
         {/* ── Step 1: Base (pick one) ─────────────────────── */}
         {step === 1 && (
           <div>
@@ -229,7 +242,17 @@ export default function BuildPage() {
                     selected={selectedBase?.id === base.id}
                     onClick={() => setSelectedBase(base)}
                   >
-                    <div className="font-bold text-brown">{name(base)}</div>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="font-bold text-brown">{name(base)}</div>
+                      {base.price > 0 && (
+                        <span
+                          className="text-primary font-bold text-sm whitespace-nowrap"
+                          title={t("priceEstimated")}
+                        >
+                          {fmtPrice(base.price)}
+                        </span>
+                      )}
+                    </div>
                     {desc(base) && (
                       <div className="text-xs text-gray-500 mt-1 line-clamp-2">{desc(base)}</div>
                     )}
@@ -272,7 +295,15 @@ export default function BuildPage() {
                           </svg>
                         )}
                       </div>
-                      <span className="text-sm font-medium text-brown">{name(topping)}</span>
+                      <span className="text-sm font-medium text-brown flex-1">{name(topping)}</span>
+                      {topping.price > 0 && (
+                        <span
+                          className="text-primary font-bold text-xs whitespace-nowrap"
+                          title={t("priceEstimated")}
+                        >
+                          {fmtAddOn(topping.price)}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -310,7 +341,17 @@ export default function BuildPage() {
                           {t("comingSoon")}
                         </span>
                       )}
-                      <span className="font-bold text-brown">{name(p)}</span>
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="font-bold text-brown">{name(p)}</span>
+                        {!unavailable && p.price > 0 && (
+                          <span
+                            className="text-primary font-bold text-sm whitespace-nowrap"
+                            title={t("priceEstimated")}
+                          >
+                            {fmtAddOn(p.price)}
+                          </span>
+                        )}
+                      </div>
                       {desc(p) && (
                         <p className="text-xs text-gray-500 mt-1 line-clamp-1 pr-20">{desc(p)}</p>
                       )}
@@ -403,10 +444,15 @@ export default function BuildPage() {
                 </p>
               </div>
 
-              {/* Price note (prices TBD) */}
+              {/* Estimated total (placeholder prices) */}
               <div className="flex items-center justify-between px-5 py-4 bg-cream">
                 <span className="font-bold text-brown text-lg">{t("review.total")}</span>
-                <span className="font-semibold text-primary text-sm">{t("priceComingSoon")}</span>
+                <span
+                  className="font-bold text-primary text-lg"
+                  title={t("priceEstimated")}
+                >
+                  {fmtPrice(runningTotal)}
+                </span>
               </div>
             </div>
           </div>

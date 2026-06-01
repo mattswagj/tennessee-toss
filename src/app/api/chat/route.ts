@@ -21,10 +21,13 @@ async function fetchMenuContext(): Promise<string> {
         : "";
       const cal = item.calories ? ` | ${item.calories} cal` : "";
       const desc = item.description_en ? ` — ${item.description_en}` : "";
-      return `• ${item.name_en} $${Number(item.price).toFixed(2)}${cal}${tags}${desc}`;
+      // $0 items are free/included in the build-your-own base price, not "$0.00".
+      const priceNum = Number(item.price);
+      const price = priceNum > 0 ? ` $${priceNum.toFixed(2)}` : " (free/included)";
+      return `• ${item.name_en}${price}${cal}${tags}${desc}`;
     });
 
-    return `LIVE MENU (today's available items):\n${lines.join("\n")}`;
+    return `LIVE MENU (today's available items):\n${lines.join("\n")}\n\nNOTE: All prices above are PLACEHOLDER estimates pending the owner's confirmation. If a customer asks, tell them prices are being finalized.`;
   } catch {
     return STATIC_MENU_FALLBACK;
   }

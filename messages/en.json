@@ -56,7 +56,10 @@
     "addToCart": "Add to Cart",
     "noItems": "No items found.",
     "comingSoon": "Coming Soon",
-    "priceComingSoon": "Price coming soon"
+    "priceComingSoon": "Price coming soon",
+    "free": "Free",
+    "priceEstimated": "Estimated price — subject to change",
+    "priceNote": "Heads up: prices shown are estimates and may change — final pricing is pending confirmation."
   },
   "builder": {
     "title": "Build Your Salad",
@@ -69,6 +72,10 @@
     "optional": "Optional — skip if you'd like",
     "comingSoon": "Coming Soon",
     "priceComingSoon": "Price coming soon",
+    "free": "Free",
+    "included": "Included",
+    "priceEstimated": "Estimated price — subject to change",
+    "priceNote": "Prices shown are estimates and may change — final pricing is pending confirmation.",
     "step1Label": "Choose Your Base",
     "step2Label": "Choose Toppings",
     "step3Label": "Choose Your Protein",
@@ -103,6 +110,7 @@
     "tax": "Tax (8%)",
     "total": "Total",
     "remove": "Remove",
+    "priceNote": "Totals are estimates based on placeholder prices and may change — final pricing is pending confirmation.",
     "orderType": "Order Type",
     "pickup": "Pickup",
     "delivery": "Delivery",

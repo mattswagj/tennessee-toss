@@ -56,7 +56,10 @@
     "addToCart": "Agregar al Carrito",
     "noItems": "No se encontraron artículos.",
     "comingSoon": "Próximamente",
-    "priceComingSoon": "Precio próximamente"
+    "priceComingSoon": "Precio próximamente",
+    "free": "Incluido",
+    "priceEstimated": "Precio estimado — sujeto a cambios",
+    "priceNote": "Aviso: los precios mostrados son estimados y pueden cambiar — el precio final está pendiente de confirmación."
   },
   "builder": {
     "title": "Arma Tu Ensalada",
@@ -69,6 +72,10 @@
     "optional": "Opcional — puedes omitir este paso",
     "comingSoon": "Próximamente",
     "priceComingSoon": "Precio próximamente",
+    "free": "Incluido",
+    "included": "Incluido",
+    "priceEstimated": "Precio estimado — sujeto a cambios",
+    "priceNote": "Los precios mostrados son estimados y pueden cambiar — el precio final está pendiente de confirmación.",
     "step1Label": "Elige Tu Base",
     "step2Label": "Elige Tus Toppings",
     "step3Label": "Elige Tu Proteína",
@@ -103,6 +110,7 @@
     "tax": "Impuesto (8%)",
     "total": "Total",
     "remove": "Eliminar",
+    "priceNote": "Los totales son estimados basados en precios provisionales y pueden cambiar — el precio final está pendiente de confirmación.",
     "orderType": "Tipo de Orden",
     "pickup": "Para Llevar",
     "delivery": "A Domicilio",

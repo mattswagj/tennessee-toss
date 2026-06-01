@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
 import { EmptyBowl } from "@/components/illustrations/EmptyBowl";
+import { PriceDisclaimer } from "@/components/PriceDisclaimer";
 
 const TAX_RATE = 0.08;
 const POINTS_PER_DOLLAR = 10;
@@ -308,10 +309,13 @@ export default function CartPage() {
             </div>
             <div className="flex justify-between px-5 py-4 bg-cream">
               <span className="font-bold text-brown text-lg">{t("cart.total")}</span>
-              <span className="font-bold text-brown text-xl">${total.toFixed(2)}</span>
+              <span className="font-bold text-brown text-xl">${total.toFixed(2)}*</span>
             </div>
           </div>
         </div>
+
+        {/* Placeholder-price disclaimer (remove once prices confirmed) */}
+        <PriceDisclaimer note={t("cart.priceNote")} />
 
         {/* Checkout button */}
         <button
