@@ -21,6 +21,7 @@ export type MenuItem = {
   calories: number | null;
   is_available: boolean;
   is_featured: boolean;
+  coming_soon: boolean;
   display_order: number;
 };
 

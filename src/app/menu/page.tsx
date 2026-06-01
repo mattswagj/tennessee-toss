@@ -38,17 +38,35 @@ function MenuCard({
   item,
   locale,
   addLabel,
+  comingSoonLabel,
+  priceComingSoonLabel,
 }: {
   item: MenuItem;
   locale: "en" | "es";
   addLabel: string;
+  comingSoonLabel: string;
+  priceComingSoonLabel: string;
 }) {
   const { addItem } = useCart();
   const name = locale === "es" ? item.name_es : item.name_en;
   const description = locale === "es" ? item.description_es : item.description_en;
 
+  const comingSoon = item.coming_soon || !item.is_available;
+  const priceTbd = !comingSoon && item.price <= 0;
+
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+    <div
+      className={`relative bg-white rounded-2xl overflow-hidden shadow-sm transition-shadow flex flex-col ${
+        comingSoon ? "opacity-60" : "hover:shadow-md"
+      }`}
+    >
+      {/* Coming Soon badge */}
+      {comingSoon && (
+        <span className="absolute top-3 right-3 z-10 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+          {comingSoonLabel}
+        </span>
+      )}
+
       {item.image_url ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={item.image_url} alt={name} className="w-full h-40 object-cover" />
@@ -60,9 +78,11 @@ function MenuCard({
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-1">
           <h3 className="font-bold text-brown text-base leading-tight">{name}</h3>
-          <span className="text-primary font-bold text-base whitespace-nowrap">
-            ${item.price.toFixed(2)}
-          </span>
+          {!comingSoon && (
+            <span className="text-primary font-bold text-sm whitespace-nowrap">
+              {priceTbd ? priceComingSoonLabel : `$${item.price.toFixed(2)}`}
+            </span>
+          )}
         </div>
         {description && (
           <p className="text-gray-500 text-sm mb-3 flex-1 line-clamp-3">{description}</p>
@@ -71,13 +91,15 @@ function MenuCard({
           <p className="text-xs text-gray-400 mb-3">{item.calories} cal</p>
         )}
         <button
+          disabled={comingSoon}
           onClick={() => {
+            if (comingSoon) return;
             addItem(item);
             toast.success(`${name} added to cart`);
           }}
-          className="mt-auto w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2 rounded-xl transition-colors text-sm"
+          className="mt-auto w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2 rounded-xl transition-colors text-sm disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300"
         >
-          {addLabel}
+          {comingSoon ? comingSoonLabel : addLabel}
         </button>
       </div>
     </div>
@@ -104,10 +126,10 @@ export default function MenuPage() {
         .select("*")
         .eq("is_active", true)
         .order("display_order"),
+      // Include unavailable items too — they render as "Coming Soon".
       supabase
         .from("menu_items")
         .select("*")
-        .eq("is_available", true)
         .order("display_order"),
     ]).then(([catRes, itemRes]) => {
       if (catRes.data) setCategories(catRes.data as MenuCategory[]);
@@ -210,6 +232,8 @@ export default function MenuPage() {
                 item={item}
                 locale={locale}
                 addLabel={t("addToCart")}
+                comingSoonLabel={t("comingSoon")}
+                priceComingSoonLabel={t("priceComingSoon")}
               />
             ))}
           </div>
