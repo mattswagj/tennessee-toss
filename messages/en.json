@@ -1,9 +1,31 @@
 {
   "nav": {
     "home": "Home",
+    "about": "About",
     "menu": "Menu",
     "buildSalad": "Build Your Salad",
     "account": "Account"
+  },
+  "about": {
+    "heroTitle": "Our Story",
+    "heroBadge": "Crafted Fresh Daily",
+    "whoWeAreTitle": "Who We Are",
+    "whoWeAreBody": "Tennessee Toss was born in Lebanon, Tennessee with one simple idea — fresh, handcrafted salads made with care. We use quality ingredients, bold flavors, and homemade recipes to bring something delicious to every customer who walks through our door.",
+    "missionTitle": "Our Mission",
+    "missionBody": "To provide convenient, nutritious meals that are fresh, delicious, and made with care — every single day.",
+    "differentTitle": "What Makes Us Different",
+    "pillar1Title": "Crafted Fresh Daily",
+    "pillar1Body": "Every salad is made-to-order with the freshest ingredients.",
+    "pillar2Title": "Homemade Recipes",
+    "pillar2Body": "Our dressings, bacon bits, and bold flavors are all made in-house.",
+    "pillar3Title": "Lebanon, TN Local",
+    "pillar3Body": "Born and built right here in middle Tennessee.",
+    "findUsTitle": "Find Us",
+    "findUsBody": "Located in Lebanon, Tennessee. Follow us on Instagram @tennesseetoss for hours, daily specials, and where to find us.",
+    "followInstagram": "Follow us on Instagram →",
+    "ctaHeadline": "Ready to toss something delicious?",
+    "orderNow": "Order Now",
+    "buildYourOwn": "Build Your Own"
   },
   "hero": {
     "tagline": "Crafted Fresh Daily",

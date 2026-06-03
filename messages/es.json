@@ -1,9 +1,31 @@
 {
   "nav": {
     "home": "Inicio",
+    "about": "Nosotros",
     "menu": "Menú",
     "buildSalad": "Arma Tu Ensalada",
     "account": "Cuenta"
+  },
+  "about": {
+    "heroTitle": "Nuestra Historia",
+    "heroBadge": "Preparado Fresco Cada Día",
+    "whoWeAreTitle": "Quiénes Somos",
+    "whoWeAreBody": "Tennessee Toss nació en Lebanon, Tennessee con una idea simple — ensaladas frescas, hechas a mano y con cariño. Usamos ingredientes de calidad, sabores intensos y recetas caseras para ofrecer algo delicioso a cada cliente que entra por nuestra puerta.",
+    "missionTitle": "Nuestra Misión",
+    "missionBody": "Ofrecer comidas prácticas y nutritivas que sean frescas, deliciosas y preparadas con cariño — todos los días.",
+    "differentTitle": "Lo Que Nos Hace Diferentes",
+    "pillar1Title": "Preparado Fresco Cada Día",
+    "pillar1Body": "Cada ensalada se prepara al momento con los ingredientes más frescos.",
+    "pillar2Title": "Recetas Caseras",
+    "pillar2Body": "Nuestros aderezos, trocitos de tocino y sabores intensos se hacen en casa.",
+    "pillar3Title": "De Lebanon, TN",
+    "pillar3Body": "Nacidos y hechos aquí mismo, en el centro de Tennessee.",
+    "findUsTitle": "Encuéntranos",
+    "findUsBody": "Ubicados en Lebanon, Tennessee. Síguenos en Instagram @tennesseetoss para conocer horarios, especiales del día y dónde encontrarnos.",
+    "followInstagram": "Síguenos en Instagram →",
+    "ctaHeadline": "¿Listo para algo delicioso?",
+    "orderNow": "Ordena Ahora",
+    "buildYourOwn": "Arma la Tuya"
   },
   "hero": {
     "tagline": "Preparado Fresco Cada Día",
